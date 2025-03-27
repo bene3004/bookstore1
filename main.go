@@ -2,6 +2,7 @@ package main
 
 import (
 	"awesomeProject1/handlers"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -9,7 +10,7 @@ func main() {
 	router := gin.Default()
 
 	// Book routes
-	router.GET("/books", handlers.GetBooks)
+	router.GET("/books", handlers.GetAllBooks)
 	router.POST("/books", handlers.CreateBook)
 	router.GET("/books/:id", handlers.GetBookByID)
 	router.PUT("/books/:id", handlers.UpdateBook)
@@ -23,5 +24,5 @@ func main() {
 	router.GET("/categories", handlers.GetCategories)
 	router.POST("/categories", handlers.CreateCategory)
 
-	router.Run(":8080")
+	router.Run(":1117")
 }

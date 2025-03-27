@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"awesomeProject1/models"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -12,8 +13,42 @@ var books = []models.Book{}
 var nextBookID = 1
 
 // List books with pagination and filters
-func GetBooks(c *gin.Context) {
-	c.JSON(http.StatusOK, books)
+func GetAllBooks(c *gin.Context) {
+	categoryFilter := c.Query("category")
+	authorFilter := c.Query("author")
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	pageSize, _ := strconv.Atoi(c.DefaultQuery("page_size", "5"))
+
+	if page < 1 {
+		page = 1
+	}
+	if pageSize < 1 {
+		pageSize = 5
+	}
+
+	var filtered []models.Book
+
+	// filtering based on category and author
+	for _, b := range books {
+		if (categoryFilter == "" || strconv.Itoa(b.CategoryID) == categoryFilter) && (authorFilter == "" || strconv.Itoa(b.AuthorID) == authorFilter) {
+			filtered = append(filtered, b)
+		}
+	}
+
+	// pagination
+	startIndex := (page - 1) * pageSize
+	endIndex := startIndex + pageSize
+
+	if startIndex > len(filtered) {
+		c.JSON(http.StatusOK, []models.Book{})
+		return
+	}
+
+	if endIndex > len(filtered) {
+		endIndex = len(filtered)
+	}
+
+	c.JSON(http.StatusOK, filtered[startIndex:endIndex])
 }
 
 // Add a new book
